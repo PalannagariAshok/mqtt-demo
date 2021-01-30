@@ -3,19 +3,11 @@
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   <div style="display:flex;flex-direction:column">
-    <div style="display:flex;margin-bottom:1.5em" >
-      <button :class="['button', buttonValue1==1? 'active':'inactive' ]" @click="doPublish('output1')">Output 1</button>
-      <button :class="['button', buttonValue2==1? 'active':'inactive' ]" style="margin-left:10px;">Output 2</button>
+    <div style="display:flex;margin-bottom:1.5em">
+      <button :class="['button', buttonValue1==1? 'active':'inactive' ]" @click="doPublish('output1')" >Output 1</button>
+      <!-- <button :class="['button', color1=='active'? 'active':'inactive' ]" style="margin-left:10px;">Output 2</button> -->
     </div>
-  <!-- <div v-else>
-    loading...
-  </div> -->
-
-    <!-- Status
-    <div style="display:flex;">
-      <button :class="['button', color1=='active'? 'active':'inactive' ]" style="margin-left:10px;">Input 1</button>
-      <button :class="['button', color1=='active'? 'active':'inactive' ]" style="margin-left:10px;">Input 2</button>
-    </div> -->
+   
       
   </div>
     
@@ -32,13 +24,12 @@ export default {
   },
   data(){
     return{
+      buttonValue1:0,
       color:'active',
       color1:'',
-      buttonValue1:null,
-      buttonValue2:null,
       connection: {
         host: 'broker.hivemq.com',
-        port: 8000,
+        port:8000,
         endpoint: '/mqtt',
         clean: true, // Reserved session
         connectTimeout: 4000, // Time out
@@ -53,11 +44,11 @@ export default {
         qos: 0,
       },
       publish: {
-        topic: 'demo/fiver/recieve',
+        topic: 'topic/fiver/recieve',
         qos: 0,
         payload: '',
       },
-      publication: {
+      publication:{
         topic: 'topic/fiver/recieve',
         qos: 0,
       },
@@ -90,14 +81,14 @@ export default {
       })
       this.client.on('message', (topic, message) => {
         this.receiveNews = this.receiveNews.concat(message)
-        console.log(`Received message ${message} from topic ${topic}`)
+        
+        let Message = JSON.parse(message);
+        console.log(`Received message ${Message.value} from topic ${topic}`)
         if(topic=='demo/fiver/send'){
-          if(message.name=='output1'){
-            this.buttonValue1=message.valve
-          }
-          if(message.name=='output2'){
-            this.buttonValue2=message.valve
-          }
+        
+            this.buttonValue1=Message.value
+            console.log(this.buttonValue1);
+          
         }
       })
 
@@ -111,11 +102,6 @@ export default {
         this.subscribeSuccess = true
           console.log('Subscribe to topics res', res)
         })
-      // this.client.publish('', JSON.stringify(payload), qos, error => {
-      //   if (error) {
-      //     console.log('Publish error', error)
-      //   }
-      // })
   },
   methods: {
     // Create connection
@@ -132,31 +118,32 @@ export default {
     doSubscribe() {
       
     },
-    doPublish(val) {
-      const { topic, qos} = this.publication
-      let payload={}
+    doPublish() {
+      const {  qos} = this.publication
+      let payload={};
+      let buttonValue1;
+      console.log(this.buttonValue1)
       if(this.buttonValue1 ==0){
-        this.buttonValue1=1;
+        buttonValue1=1;
       }
-      else{
-        this.buttonValue1=0;
+      if(this.buttonValue1 ==1){
+        buttonValue1=0;
       }
-      if(val=='output1'){
-        payload={
-          name:val,
-          'valve':!this.buttonValue1
-        }
-      }
-      if(val=='output2'){
-        payload={
-          name:val,
-          'valve':!this.buttonValue1
-        }
-      }
+      // if(val=='output1'){
+        
       
-      
-      console.log(topic, payload, qos)
-      this.client.publish(topic, JSON.stringify(payload), qos, error => {
+      // if(val=='output2'){
+      //   payload={
+      //     name:val,
+      //     'valve':this.buttonValue1
+      //   }
+      // }
+       payload={
+        name:'output1',
+        value:buttonValue1
+      }
+      console.log(payload)
+      this.client.publish('demo/fiver/receive', JSON.stringify(payload), qos, error => {
         if (error) {
           console.log('Publish error', error)
         }
