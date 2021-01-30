@@ -4,7 +4,7 @@
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   <div style="display:flex;flex-direction:column">
     <div style="display:flex;margin-bottom:1.5em">
-      <button :class="['button', buttonValue1==1? 'active':'inactive' ]" @click="doPublish('output1')" >Output 1</button>
+      <button :class="['button', buttonValue1===1? 'active':'inactive' ]" @click="doPublish('output1')" >Output 1</button>
       <!-- <button :class="['button', color1=='active'? 'active':'inactive' ]" style="margin-left:10px;">Output 2</button> -->
     </div>
    
@@ -28,30 +28,30 @@ export default {
       color:'active',
       color1:'',
       connection: {
-        host: 'broker.hivemq.com',
+        host: 'broker.mqttdashboard.com',
         port:8000,
         endpoint: '/mqtt',
         clean: true, // Reserved session
         connectTimeout: 4000, // Time out
         reconnectPeriod: 4000, // Reconnection interval
         // Certification Information
-        clientId: 'mqttjs_3be2c321',
-        username: 'emqx_test',
-        password: 'emqx_test',
+        // clientId: 'mqttjs_3be2c321',
+        // username: 'emqx_test',
+        // password: 'emqx_test',
       },
       subscription: {
         topic: 'demo/fiver/send',
         qos: 0,
       },
-      publish: {
-        topic: 'topic/fiver/recieve',
-        qos: 0,
-        payload: '',
-      },
-      publication:{
-        topic: 'topic/fiver/recieve',
-        qos: 0,
-      },
+      // publish: {
+      //   topic: 'topic/fiver/recieve',
+      //   qos: 0,
+      //   payload: '',
+      // },
+      // publication:{
+      //   topic: 'topic/fiver/recieve',
+      //   qos: 0,
+      // },
       receiveNews: '',
       qosList: [
         { label: 0, value: 0 },
@@ -93,8 +93,8 @@ export default {
       })
 
 
-      const { topic, qos } = this.subscription
-      this.client.subscribe(topic, { qos }, (error, res) => {
+      const {  qos } = this.subscription
+      this.client.subscribe('demo/fiver/send', { qos }, (error, res) => {
         if (error) {
           console.log('Subscribe to topics error', error)
           return
