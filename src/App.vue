@@ -28,7 +28,7 @@ export default {
       color:'active',
       color1:'',
       connection: {
-        host: 'broker.mqttdashboard.com',
+        host: 'broker.hivemq.com',
         port:8000,
         endpoint: '/mqtt',
         clean: true, // Reserved session
@@ -43,15 +43,15 @@ export default {
         topic: 'demo/fiver/send',
         qos: 0,
       },
-      // publish: {
-      //   topic: 'topic/fiver/recieve',
-      //   qos: 0,
-      //   payload: '',
-      // },
-      // publication:{
-      //   topic: 'topic/fiver/recieve',
-      //   qos: 0,
-      // },
+      publish: {
+        topic: 'topic/fiver/recieve',
+        qos: 0,
+        payload: '',
+      },
+      publication:{
+        topic: 'topic/fiver/recieve',
+        qos: 0,
+      },
       receiveNews: '',
       qosList: [
         { label: 0, value: 0 },
@@ -65,7 +65,7 @@ export default {
 
     }
   },
-  mounted(){
+  created(){
      const { host, port, endpoint, ...options } = this.connection
       const connectUrl = `ws://${host}:${port}${endpoint}`
       try {
